@@ -30,3 +30,9 @@ To clone from private repositories from GitHub, ensure that your server's SSH pu
 ```bash
 cat /root/.ssh/id_ed25519.pub
 ```
+
+Create a new website using the `websitenew` script:
+
+```bash
+websitenew yourdomain.com 3001
+```
