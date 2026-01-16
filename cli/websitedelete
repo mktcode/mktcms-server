@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOMAIN_NAME=$1
+
+# Remove Nginx Config
+rm -f "/etc/nginx/sites-enabled/${DOMAIN_NAME}.conf"
+rm -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf"
+
+# Remove Supervisor Config
+rm -f "/etc/supervisor/conf.d/${DOMAIN_NAME}.conf"
+
+# Remove Website Files
+rm -rf "/var/www/websites/${DOMAIN_NAME}"
+
+# Reload Services
+nginx -t
+systemctl reload nginx
+supervisorctl reread
+supervisorctl update
+
+# Remove SSL Certificate
+certbot delete --cert-name "${DOMAIN_NAME}"
+
+echo "Website ${DOMAIN_NAME} has been deleted."
