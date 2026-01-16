@@ -15,15 +15,6 @@ git clone https://github.com/mktcode/mktcms-server.git
 echo 'export PATH=$PATH:~/mktcms-server/cli' >> ~/.bashrc
 ```
 
-Copy `.env.example` to `.env` and modify the variables as needed.
-
-```bash
-cp .env.example .env
-vim .env
-```
-
-This will be the default environment variables for your websites services, some of which will be replaced during site creation.
-
 ## Create a New Website
 
 To clone from private repositories from GitHub, ensure that your server's SSH public key is added to your GitHub account.
