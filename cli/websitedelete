@@ -20,6 +20,6 @@ supervisorctl reread
 supervisorctl update
 
 # Remove SSL Certificate
-certbot delete --cert-name "${DOMAIN_NAME}" -n
+certbot delete --cert-name "${DOMAIN_NAME}" -n --quiet
 
 echo "Website ${DOMAIN_NAME} has been deleted."
