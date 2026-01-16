@@ -60,3 +60,10 @@ This will remove the application files, nginx and supervisor configurations, and
 ```bash
 websitedelete yourdomain.com
 ```
+## Other helpful commands
+
+See how many IP addresses are currently banned by Fail2Ban for SSH:
+
+```bash
+fail2ban-client status sshd
+```
