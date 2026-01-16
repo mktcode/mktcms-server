@@ -51,3 +51,7 @@ nginx -t
 systemctl reload nginx
 supervisorctl reread
 supervisorctl update
+
+echo "Website ${DOMAIN_NAME} has been created."
+echo "Auth Key: ${RANDOM_AUTH_KEY}"
+echo "Please run the certificate setup script to enable HTTPS."
