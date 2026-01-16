@@ -33,7 +33,7 @@ write_files:
       findtime = 10m
 
 runcmd:
-  # App-User + Verzeichnisse
+  # Create app and log directories
   - install -d -o websites -g websites /var/www/websites
   - install -d -o websites -g websites /var/log/websites
 
@@ -42,11 +42,11 @@ runcmd:
   - tar -xJf /tmp/node-v24.12.0-linux-x64.tar.xz -C /usr/local --strip-components=1
   - rm -f /tmp/node-v24.12.0-linux-x64.tar.xz
 
-  # Nginx Default-Site entfernen
+  # Remove default nginx config
   - rm -f /etc/nginx/sites-enabled/default
   - nginx -t
 
-  # Starten
+  # Start and enable services
   - systemctl enable --now nginx
   - systemctl enable --now supervisor
   - systemctl enable --now fail2ban
