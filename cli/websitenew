@@ -12,7 +12,7 @@ if [[ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" || -f "/etc/supervisor
 fi
 
 # Search supervisor configs for PORT=${APP_PORT} to avoid port conflicts
-if grep -q "PORT=${APP_PORT}" /etc/supervisor/conf.d/*.conf; then
+if grep -q "PORT=\"${APP_PORT}\"" /etc/supervisor/conf.d/*.conf; then
     echo "Error: Port ${APP_PORT} is already in use by another application." >&2
     exit 1
 fi
