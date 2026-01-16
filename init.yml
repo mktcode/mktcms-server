@@ -33,6 +33,9 @@ write_files:
       findtime = 10m
 
 runcmd:
+  # Generate root SSH key
+  - ssh-keygen -t ed25519 -a 100 -N '' -f /root/.ssh/github
+
   # Create app and log directories
   - install -d -o websites -g websites /var/www/websites
   - install -d -o websites -g websites /var/log/websites

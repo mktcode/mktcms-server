@@ -22,3 +22,11 @@ vim .env
 ```
 
 This will be the default environment variables for your websites services, some of which will be replaced during site creation.
+
+## Create a New Website
+
+To clone from private repositories from GitHub, ensure that your server's SSH public key is added to your GitHub account.
+
+```bash
+cat /root/.ssh/github.pub
+```
