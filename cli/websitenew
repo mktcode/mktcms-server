@@ -5,9 +5,9 @@ DOMAIN_NAME=$1
 APP_PORT=$2
 RANDOM_AUTH_KEY=$(openssl rand -base64 32 | tr -d /=+ | cut -c1-32)
 
-# Exist if website dir already exists
-if [[ -d "/var/www/websites/${DOMAIN_NAME}" ]]; then
-    echo "Error: Website directory /var/www/websites/${DOMAIN_NAME} already exists." >&2
+# Exit if website dir or config files already exists
+if [[ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" || -f "/etc/supervisor/conf.d/${DOMAIN_NAME}.conf" || -d "/var/www/websites/${DOMAIN_NAME}" ]]; then
+    echo "Error: Website configuration or directory for ${DOMAIN_NAME} already exists." >&2
     exit 1
 fi
 
