@@ -15,6 +15,12 @@ git clone https://github.com/mktcode/mktcms-server.git
 echo 'export PATH=$PATH:~/mktcms-server/cli' >> ~/.bashrc
 ```
 
+Restart your shell or source the .bashrc file:
+
+```bash
+source ~/.bashrc
+```
+
 ## Create a New Website
 
 To clone from private repositories from GitHub, ensure that your server's SSH public key is added to your GitHub account.
