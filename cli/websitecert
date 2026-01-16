@@ -2,6 +2,7 @@
 set -euo pipefail
 
 DOMAIN_NAME=$1
+EMAIL=$2
+
 DOMAINS=(-d "${DOMAIN_NAME}" -d "www.${DOMAIN_NAME}")
-EMAIL="kontakt@markus-kottlaender.de"
 certbot --nginx "${DOMAINS[@]}" -m "${EMAIL}" --agree-tos --non-interactive --redirect
