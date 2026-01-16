@@ -42,8 +42,9 @@ runcmd:
   - tar -xJf /tmp/node-v24.12.0-linux-x64.tar.xz -C /usr/local --strip-components=1
   - rm -f /tmp/node-v24.12.0-linux-x64.tar.xz
 
-  # Remove default nginx config
+  # Remove default nginx config and html
   - rm -f /etc/nginx/sites-enabled/default
+  - rm -rf /var/www/html
   - nginx -t
 
   # Start and enable services
