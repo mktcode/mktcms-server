@@ -1,0 +1,52 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - nginx
+  - supervisor
+  - curl
+  - ca-certificates
+  - xz-utils
+  - git
+  - certbot
+  - python3-certbot-nginx
+  - fail2ban
+
+users:
+  - default
+  - name: websites
+    system: true
+    home: /var/www/websites
+    shell: /bin/bash
+    create_home: true
+    lock_passwd: true
+
+write_files:
+  - path: /etc/fail2ban/jail.d/sshd.local
+    permissions: "0644"
+    content: |
+      [sshd]
+      enabled = true
+      maxretry = 5
+      bantime  = 24h
+      findtime = 10m
+
+runcmd:
+  # App-User + Verzeichnisse
+  - install -d -o websites -g websites /var/www/websites
+  - install -d -o websites -g websites /var/log/websites
+
+  # Node.js global – Version: 24.12.0 (LTS)
+  - curl -fsSL https://nodejs.org/dist/v24.12.0/node-v24.12.0-linux-x64.tar.xz -o /tmp/node-v24.12.0-linux-x64.tar.xz
+  - tar -xJf /tmp/node-v24.12.0-linux-x64.tar.xz -C /usr/local --strip-components=1
+  - rm -f /tmp/node-v24.12.0-linux-x64.tar.xz
+
+  # Nginx Default-Site entfernen
+  - rm -f /etc/nginx/sites-enabled/default
+  - nginx -t
+
+  # Starten
+  - systemctl enable --now nginx
+  - systemctl enable --now supervisor
+  - systemctl enable --now fail2ban

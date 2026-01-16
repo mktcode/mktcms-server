@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+DOMAIN_NAME=$1
+
+cd /var/www/websites/${DOMAIN_NAME}
+git pull
+npm ci
+npm run build
+chown -R websites:websites /var/www/websites/${DOMAIN_NAME}
+supervisorctl restart ${DOMAIN_NAME}
