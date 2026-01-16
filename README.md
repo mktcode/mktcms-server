@@ -28,5 +28,5 @@ This will be the default environment variables for your websites services, some 
 To clone from private repositories from GitHub, ensure that your server's SSH public key is added to your GitHub account.
 
 ```bash
-cat /root/.ssh/github.pub
+cat /root/.ssh/id_ed25519.pub
 ```
