@@ -5,12 +5,21 @@ DOMAIN_NAME=$1
 APP_PORT=$2
 RANDOM_AUTH_KEY=$(openssl rand -base64 32 | tr -d /=+ | cut -c1-32)
 
+# Resolve templates relative to this script, not the current working directory.
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")" && pwd)"
+TEMPLATE_DIR="$SCRIPT_DIR/../website"
+
+if [[ ! -f "$TEMPLATE_DIR/nginx.conf" || ! -f "$TEMPLATE_DIR/supervisor.conf" ]]; then
+	echo "Template files not found in $TEMPLATE_DIR" >&2
+	exit 1
+fi
+
 # Nginx Config
-sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g" ../website/nginx.conf > /etc/nginx/sites-available/${DOMAIN_NAME}.conf
-ln -s /etc/nginx/sites-available/${DOMAIN_NAME}.conf /etc/nginx/sites-enabled/${DOMAIN_NAME}.conf
+sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g" "$TEMPLATE_DIR/nginx.conf" > "/etc/nginx/sites-available/${DOMAIN_NAME}.conf"
+ln -s "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" "/etc/nginx/sites-enabled/${DOMAIN_NAME}.conf"
 
 # Supervisor Config
-sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g; s/{{RANDOM_AUTH_KEY}}/${RANDOM_AUTH_KEY}/g" ../website/supervisor.conf > /etc/supervisor/conf.d/${DOMAIN_NAME}.conf
+sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g; s/{{RANDOM_AUTH_KEY}}/${RANDOM_AUTH_KEY}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${DOMAIN_NAME}.conf"
 
 # Clone Repo and setup
 mkdir /var/www/websites/${DOMAIN_NAME}
