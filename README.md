@@ -60,6 +60,15 @@ This will remove the application files, nginx and supervisor configurations, and
 ```bash
 websitedelete yourdomain.com
 ```
+
+## Restart Website
+
+To restart a website's service, use the `websiterestart` script:
+
+```bash
+websiterestart yourdomain.com
+```
+
 ## Other helpful commands
 
 See how many IP addresses are currently banned by Fail2Ban for SSH:
