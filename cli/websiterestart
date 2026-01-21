@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOMAIN_NAME=$1
+
+# Reload Services
+nginx -t
+systemctl reload nginx
+supervisorctl reread
+supervisorctl update
+supervisorctl restart "${DOMAIN_NAME}"
