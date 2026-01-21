@@ -55,4 +55,4 @@ supervisorctl update
 echo "Website ${DOMAIN_NAME} has been created."
 echo "Auth Key: ${RANDOM_AUTH_KEY}"
 echo "Please run the certificate setup script to enable HTTPS:"
-echo "websitecert ${DOMAIN_NAME}"
+echo "websitecert ${DOMAIN_NAME} <email_address>"
