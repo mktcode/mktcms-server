@@ -38,6 +38,9 @@ mkdir /var/www/websites/${DOMAIN_NAME}
 cd /var/www/websites/${DOMAIN_NAME}
 git clone git@github.com:mktcode/${DOMAIN_NAME}.git .
 
+# Initialize Content
+cp -r content/ .storage/
+
 ### Check for better way (use websites user to clone/pull)
 git config --global --add safe.directory /var/www/websites/${DOMAIN_NAME}
 ###
