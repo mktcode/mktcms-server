@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOMAIN_NAME=$1
+APP_PORT=$2
+
+# Exit if config file already exists
+if [[ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" ]]; then
+    echo "Error: Domain configuration for ${DOMAIN_NAME} already exists." >&2
+    exit 1
+fi
+
+# Resolve templates relative to this script, not the current working directory.
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")" && pwd)"
+TEMPLATE_DIR="$SCRIPT_DIR/../website"
+
+if [[ ! -f "$TEMPLATE_DIR/nginx.conf" ]]; then
+	echo "Template file not found in $TEMPLATE_DIR" >&2
+	exit 1
+fi
+
+# Nginx Config
+sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g" "$TEMPLATE_DIR/nginx.conf" > "/etc/nginx/sites-available/${DOMAIN_NAME}.conf"
+ln -s "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" "/etc/nginx/sites-enabled/${DOMAIN_NAME}.conf"
+
+# Reload Services
+nginx -t
+systemctl reload nginx
+
+echo "Domain ${DOMAIN_NAME} has been added."
+echo "Please run the certificate setup script to enable HTTPS:"
+echo "websitecert ${DOMAIN_NAME} <email_address>"
