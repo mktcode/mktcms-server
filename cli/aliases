@@ -3,7 +3,7 @@
 
 # Example alias
 allwebsites() {
-  cd var/www/websites || return
+  cd /var/www/websites || return
   for d in */; do
     ( cd "$d" && echo "== $d ==" && "$@" )
   done
