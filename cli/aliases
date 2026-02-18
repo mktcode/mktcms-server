@@ -1,0 +1,10 @@
+# CLI Aliases for mktcms-server
+# Source this file in your ~/.bashrc with: source /home/mkt/Projekte/mktcms-server/cli/aliases
+
+# Example alias
+allwebsites() {
+  cd var/www/websites || return
+  for d in */; do
+    ( cd "$d" && echo "== $d ==" && "$@" )
+  done
+}
