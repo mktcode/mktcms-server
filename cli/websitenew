@@ -65,7 +65,7 @@ sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g" "$TEMPLAT
 ln -s "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" "/etc/nginx/sites-enabled/${DOMAIN_NAME}.conf"
 
 # Supervisor Config
-sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g; s/{{RANDOM_AUTH_KEY}}/${RANDOM_AUTH_KEY}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${DOMAIN_NAME}.conf"
+sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{REPO}}/${REPO_PARAM}/g; s/{{APP_PORT}}/${APP_PORT}/g; s/{{RANDOM_AUTH_KEY}}/${RANDOM_AUTH_KEY}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${DOMAIN_NAME}.conf"
 
 # Clone Repo and setup
 mkdir -p "/var/www/websites/${DOMAIN_NAME}"
