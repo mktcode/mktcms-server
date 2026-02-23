@@ -32,7 +32,7 @@ cat /root/.ssh/id_ed25519.pub
 Create a new website using the `websitenew` script:
 
 ```bash
-websitenew yourdomain.com 3001
+websitenew yourdomain.com 3001 mktcode/your-repo
 ```
 
 Create an SSL certificate for the new website using the `websitecert` script.

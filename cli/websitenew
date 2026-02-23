@@ -1,8 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DOMAIN_NAME=$1
-APP_PORT=$2
+usage() {
+    echo "Usage: websitenew <domain_name> <app_port> <owner/repo-name>" >&2
+}
+
+DOMAIN_NAME=${1:-}
+APP_PORT=${2:-}
+REPO_PARAM=${3:-}
+
+if [[ -z "$DOMAIN_NAME" || -z "$APP_PORT" || -z "$REPO_PARAM" ]]; then
+    usage
+    exit 2
+fi
+
+if [[ ! "$APP_PORT" =~ ^[0-9]+$ ]]; then
+    echo "Error: app_port must be a number." >&2
+    usage
+    exit 2
+fi
+
+if [[ "$REPO_PARAM" != */* ]]; then
+    echo "Error: repo must be in 'owner/repo-name' form." >&2
+    usage
+    exit 2
+fi
+
+if [[ "$REPO_PARAM" == *.git ]]; then
+    CLONE_URL="git@github.com:${REPO_PARAM}"
+else
+    CLONE_URL="git@github.com:${REPO_PARAM}.git"
+fi
+
 RANDOM_AUTH_KEY=$(openssl rand -base64 32 | tr -d /=+ | cut -c1-32)
 
 # Exit if website dir or config files already exists
@@ -12,9 +41,14 @@ if [[ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" || -f "/etc/supervisor
 fi
 
 # Search supervisor configs for PORT=${APP_PORT} to avoid port conflicts
-if grep -q "PORT=\"${APP_PORT}\"" /etc/supervisor/conf.d/*.conf; then
-    echo "Error: Port ${APP_PORT} is already in use by another application." >&2
-    exit 1
+shopt -s nullglob
+SUPERVISOR_CONFS=(/etc/supervisor/conf.d/*.conf)
+shopt -u nullglob
+if (( ${#SUPERVISOR_CONFS[@]} )); then
+    if grep -q "PORT=\"${APP_PORT}\"" "${SUPERVISOR_CONFS[@]}"; then
+        echo "Error: Port ${APP_PORT} is already in use by another application." >&2
+        exit 1
+    fi
 fi
 
 # Resolve templates relative to this script, not the current working directory.
@@ -34,17 +68,17 @@ ln -s "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" "/etc/nginx/sites-enabled
 sed "s/{{DOMAIN_NAME}}/${DOMAIN_NAME}/g; s/{{APP_PORT}}/${APP_PORT}/g; s/{{RANDOM_AUTH_KEY}}/${RANDOM_AUTH_KEY}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${DOMAIN_NAME}.conf"
 
 # Clone Repo and setup
-mkdir /var/www/websites/${DOMAIN_NAME}
-cd /var/www/websites/${DOMAIN_NAME}
-git clone git@github.com:mktcode/${DOMAIN_NAME}.git .
+mkdir -p "/var/www/websites/${DOMAIN_NAME}"
+cd "/var/www/websites/${DOMAIN_NAME}"
+git clone "$CLONE_URL" .
 
 ### Check for better way (use websites user to clone/pull)
-git config --global --add safe.directory /var/www/websites/${DOMAIN_NAME}
+git config --global --add safe.directory "/var/www/websites/${DOMAIN_NAME}"
 ###
 
 npm ci
 npm run build
-chown -R websites:websites /var/www/websites/${DOMAIN_NAME}
+chown -R websites:websites "/var/www/websites/${DOMAIN_NAME}"
 
 # Reload Services
 nginx -t
