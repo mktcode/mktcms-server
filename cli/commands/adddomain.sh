@@ -9,6 +9,11 @@ cmd_adddomain() {
     local domain_name=${1:-}
     local app_port=${2:-}
 
+    if [[ ! "$app_port" =~ ^[0-9]+$ ]]; then
+        echo "Error: app_port must be a number." >&2
+        exit 2
+    fi
+
     if [[ -f "/etc/nginx/sites-available/${domain_name}.conf" ]]; then
         echo "Error: Domain configuration for ${domain_name} already exists." >&2
         exit 1

@@ -45,7 +45,7 @@ main() {
         cert)
             cmd_cert "$@"
             ;;
-        adddomain|add-domain)
+        adddomain)
             cmd_adddomain "$@"
             ;;
         all)
