@@ -12,6 +12,7 @@ packages:
   - certbot
   - python3-certbot-nginx
   - fail2ban
+  - vim
 
 users:
   - default
