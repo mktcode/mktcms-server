@@ -242,12 +242,21 @@ test_all_command() {
 }
 
 main() {
-    test_help_and_usage
-    test_new_command_success
-    test_new_command_validation
-    test_adddomain_update_delete_and_ops
-    test_all_command
-    echo "All isolated Docker CLI tests passed."
+    local -a tests=(
+        "test_help_and_usage"
+        "test_new_command_success"
+        "test_new_command_validation"
+        "test_adddomain_update_delete_and_ops"
+        "test_all_command"
+    )
+
+    local test_name
+    for test_name in "${tests[@]}"; do
+        "$test_name"
+        echo "PASS ${test_name}"
+    done
+
+    echo "All isolated Docker CLI tests passed (${#tests[@]}/${#tests[@]})."
 }
 
 main
