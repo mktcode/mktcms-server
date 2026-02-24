@@ -29,44 +29,44 @@ To clone from private repositories from GitHub, ensure that your server's SSH pu
 cat /root/.ssh/id_ed25519.pub
 ```
 
-Create a new website using the `websitenew` script:
+Create a new website using `mktcms new`:
 
 ```bash
-websitenew yourdomain.com 3001 mktcode/your-repo
+mktcms new yourdomain.com 3001 mktcode/your-repo
 ```
 
-Create an SSL certificate for the new website using the `websitecert` script.
+Create an SSL certificate for the new website using `mktcms cert`.
 This will create and install certificates for both `yourdomain.com` and `www.yourdomain.com`.
 Make sure DNS records are properly set up.
 
 ```bash
-websitecert yourdomain.com
+mktcms cert yourdomain.com your@email.com
 ```
 
 ## Update an Existing Website
 
-To update an existing website, use the `websiteupdate` script.
+To update an existing website, use `mktcms update`.
 This will pull the latest changes from the repository, rebuild the app and restart the associated service.
 
 ```bash
-websiteupdate yourdomain.com
+mktcms update yourdomain.com
 ```
 
 ## Delete a Website
 
-To delete an existing website, use the `websitedelete` script.
+To delete an existing website, use `mktcms delete`.
 This will remove the application files, nginx and supervisor configurations, and delete the SSL certificates.
 
 ```bash
-websitedelete yourdomain.com
+mktcms delete yourdomain.com
 ```
 
 ## Restart Website
 
-To restart a website's service, use the `websiterestart` script:
+To restart a website's service, use `mktcms restart`:
 
 ```bash
-websiterestart yourdomain.com
+mktcms restart yourdomain.com
 ```
 
 ## Other helpful commands
@@ -74,9 +74,9 @@ websiterestart yourdomain.com
 Run a command in every website directory:
 
 ```bash
-websitesall <command> [args...]
+mktcms all <command> [args...]
 # e.g.
-websitesall git pull
+mktcms all git pull
 ```
 
 See how many IP addresses are currently banned by Fail2Ban for SSH:

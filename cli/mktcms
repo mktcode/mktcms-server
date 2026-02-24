@@ -1,0 +1,289 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd -P -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")" && pwd)"
+TEMPLATE_DIR="$SCRIPT_DIR/../website"
+
+usage() {
+    cat >&2 <<'EOF'
+Usage:
+  mktcms new <domain_name> <app_port> <owner/repo-name>
+  mktcms update <domain_name>
+  mktcms delete <domain_name>
+  mktcms restart <domain_name>
+  mktcms cert <domain_name> <email>
+  mktcms adddomain <domain_name> <app_port>
+  mktcms all <command> [args...]
+
+Also supported as sub-sub-commands:
+  mktcms website <command> [...]
+  mktcms websites <command> [...]
+
+Examples:
+  mktcms new yourdomain.com 3001 mktcode/your-repo
+  mktcms update yourdomain.com
+  mktcms all git status
+EOF
+}
+
+run_new() {
+    local domain_name=${1:-}
+    local app_port=${2:-}
+    local repo_param=${3:-}
+
+    if [[ -z "$domain_name" || -z "$app_port" || -z "$repo_param" ]]; then
+        echo "Usage: mktcms new <domain_name> <app_port> <owner/repo-name>" >&2
+        exit 2
+    fi
+
+    if [[ ! "$app_port" =~ ^[0-9]+$ ]]; then
+        echo "Error: app_port must be a number." >&2
+        exit 2
+    fi
+
+    if [[ "$repo_param" != */* ]]; then
+        echo "Error: repo must be in 'owner/repo-name' form." >&2
+        exit 2
+    fi
+
+    local clone_url
+    if [[ "$repo_param" == *.git ]]; then
+        clone_url="git@github.com:${repo_param}"
+    else
+        clone_url="git@github.com:${repo_param}.git"
+    fi
+
+    local random_auth_key
+    random_auth_key=$(openssl rand -base64 32 | tr -d '/=+' | cut -c1-32)
+
+    if [[ -f "/etc/nginx/sites-available/${domain_name}.conf" || -f "/etc/supervisor/conf.d/${domain_name}.conf" || -d "/var/www/websites/${domain_name}" ]]; then
+        echo "Error: Website configuration or directory for ${domain_name} already exists." >&2
+        exit 1
+    fi
+
+    shopt -s nullglob
+    local supervisor_confs=(/etc/supervisor/conf.d/*.conf)
+    shopt -u nullglob
+
+    if (( ${#supervisor_confs[@]} )); then
+        if grep -q "PORT=\"${app_port}\"" "${supervisor_confs[@]}"; then
+            echo "Error: Port ${app_port} is already in use by another application." >&2
+            exit 1
+        fi
+    fi
+
+    if [[ ! -f "$TEMPLATE_DIR/nginx.conf" || ! -f "$TEMPLATE_DIR/supervisor.conf" ]]; then
+        echo "Template files not found in $TEMPLATE_DIR" >&2
+        exit 1
+    fi
+
+    sed "s/{{DOMAIN_NAME}}/${domain_name}/g; s/{{APP_PORT}}/${app_port}/g" "$TEMPLATE_DIR/nginx.conf" > "/etc/nginx/sites-available/${domain_name}.conf"
+    ln -s "/etc/nginx/sites-available/${domain_name}.conf" "/etc/nginx/sites-enabled/${domain_name}.conf"
+
+    sed "s/{{DOMAIN_NAME}}/${domain_name}/g; s/{{REPO}}/${repo_param}/g; s/{{APP_PORT}}/${app_port}/g; s/{{RANDOM_AUTH_KEY}}/${random_auth_key}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${domain_name}.conf"
+
+    mkdir -p "/var/www/websites/${domain_name}"
+    cd "/var/www/websites/${domain_name}"
+    git clone "$clone_url" .
+
+    git config --global --add safe.directory "/var/www/websites/${domain_name}"
+
+    npm ci
+    npm run build
+    chown -R websites:websites "/var/www/websites/${domain_name}"
+
+    nginx -t
+    systemctl reload nginx
+    supervisorctl reread
+    supervisorctl update
+
+    echo "Website ${domain_name} has been created."
+    echo "Auth Key: ${random_auth_key}"
+    echo "Please run the certificate setup script to enable HTTPS:"
+    echo "mktcms cert ${domain_name} <email_address>"
+}
+
+run_update() {
+    local domain_name=${1:-}
+    if [[ -z "$domain_name" ]]; then
+        echo "Usage: mktcms update <domain_name>" >&2
+        exit 2
+    fi
+
+    cd "/var/www/websites/${domain_name}"
+    git pull
+    npm ci
+    npm run build
+    chown -R websites:websites "/var/www/websites/${domain_name}"
+    supervisorctl restart "${domain_name}"
+}
+
+run_delete() {
+    local domain_name=${1:-}
+    if [[ -z "$domain_name" ]]; then
+        echo "Usage: mktcms delete <domain_name>" >&2
+        exit 2
+    fi
+
+    rm -f "/etc/nginx/sites-enabled/${domain_name}.conf"
+    rm -f "/etc/nginx/sites-available/${domain_name}.conf"
+    rm -f "/etc/supervisor/conf.d/${domain_name}.conf"
+    rm -rf "/var/www/websites/${domain_name}"
+
+    nginx -t
+    systemctl reload nginx
+    supervisorctl reread
+    supervisorctl update
+
+    certbot delete --cert-name "${domain_name}" -n --quiet
+
+    echo "Website ${domain_name} has been deleted."
+}
+
+run_restart() {
+    local domain_name=${1:-}
+    if [[ -z "$domain_name" ]]; then
+        echo "Usage: mktcms restart <domain_name>" >&2
+        exit 2
+    fi
+
+    nginx -t
+    systemctl reload nginx
+    supervisorctl reread
+    supervisorctl update
+    supervisorctl restart "${domain_name}"
+}
+
+run_cert() {
+    local domain_name=${1:-}
+    local email=${2:-}
+
+    if [[ -z "$domain_name" || -z "$email" ]]; then
+        echo "Usage: mktcms cert <domain_name> <email>" >&2
+        exit 2
+    fi
+
+    local domains=(-d "${domain_name}" -d "www.${domain_name}")
+    certbot --nginx "${domains[@]}" -m "${email}" --agree-tos --non-interactive --redirect
+}
+
+run_adddomain() {
+    local domain_name=${1:-}
+    local app_port=${2:-}
+
+    if [[ -z "$domain_name" || -z "$app_port" ]]; then
+        echo "Usage: mktcms adddomain <domain_name> <app_port>" >&2
+        exit 2
+    fi
+
+    if [[ -f "/etc/nginx/sites-available/${domain_name}.conf" ]]; then
+        echo "Error: Domain configuration for ${domain_name} already exists." >&2
+        exit 1
+    fi
+
+    if [[ ! -f "$TEMPLATE_DIR/nginx.conf" ]]; then
+        echo "Template file not found in $TEMPLATE_DIR" >&2
+        exit 1
+    fi
+
+    sed "s/{{DOMAIN_NAME}}/${domain_name}/g; s/{{APP_PORT}}/${app_port}/g" "$TEMPLATE_DIR/nginx.conf" > "/etc/nginx/sites-available/${domain_name}.conf"
+    ln -s "/etc/nginx/sites-available/${domain_name}.conf" "/etc/nginx/sites-enabled/${domain_name}.conf"
+
+    nginx -t
+    systemctl reload nginx
+
+    echo "Domain ${domain_name} has been added."
+    echo "Please run the certificate setup script to enable HTTPS:"
+    echo "mktcms cert ${domain_name} <email_address>"
+}
+
+run_all() {
+    if (( $# < 1 )); then
+        echo "Usage: mktcms all <command> [args...]" >&2
+        exit 2
+    fi
+
+    local websites_root="/var/www/websites"
+
+    if [[ ! -d "$websites_root" ]]; then
+        echo "Error: $websites_root does not exist." >&2
+        exit 1
+    fi
+
+    cd "$websites_root"
+
+    shopt -s nullglob
+    local website_dirs=(*/)
+    shopt -u nullglob
+
+    if (( ${#website_dirs[@]} == 0 )); then
+        echo "No websites found in $websites_root" >&2
+        exit 0
+    fi
+
+    for website_dir in "${website_dirs[@]}"; do
+        (
+            cd "$website_dir"
+            echo "== $website_dir =="
+            "$@"
+        )
+    done
+}
+
+main() {
+    local command=${1:-}
+    if [[ "$command" == "-h" || "$command" == "--help" || "$command" == "help" ]]; then
+        usage
+        exit 0
+    fi
+
+    if [[ -z "$command" ]]; then
+        usage
+        exit 2
+    fi
+
+    shift || true
+
+    case "$command" in
+        website|websites)
+            local nested=${1:-}
+            if [[ -z "$nested" ]]; then
+                usage
+                exit 2
+            fi
+            shift || true
+            command="$nested"
+            ;;
+    esac
+
+    case "$command" in
+        new)
+            run_new "$@"
+            ;;
+        update)
+            run_update "$@"
+            ;;
+        delete)
+            run_delete "$@"
+            ;;
+        restart)
+            run_restart "$@"
+            ;;
+        cert)
+            run_cert "$@"
+            ;;
+        adddomain|add-domain)
+            run_adddomain "$@"
+            ;;
+        all)
+            run_all "$@"
+            ;;
+        *)
+            echo "Unknown command: $command" >&2
+            usage
+            exit 2
+            ;;
+    esac
+}
+
+main "$@"
