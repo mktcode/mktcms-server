@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 cmd_new() {
-    local domain_name=${1:-}
-    local app_port=${2:-}
-    local repo_param=${3:-}
-
-    if [[ -z "$domain_name" || -z "$app_port" || -z "$repo_param" ]]; then
+    if (( $# != 3 )); then
         echo "Usage: mktcms new <domain_name> <app_port> <owner/repo-name>" >&2
         exit 2
     fi
+
+    local domain_name=${1:-}
+    local app_port=${2:-}
+    local repo_param=${3:-}
 
     if [[ ! "$app_port" =~ ^[0-9]+$ ]]; then
         echo "Error: app_port must be a number." >&2

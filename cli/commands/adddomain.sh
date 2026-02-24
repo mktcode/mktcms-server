@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 cmd_adddomain() {
-    local domain_name=${1:-}
-    local app_port=${2:-}
-
-    if [[ -z "$domain_name" || -z "$app_port" ]]; then
+    if (( $# != 2 )); then
         echo "Usage: mktcms adddomain <domain_name> <app_port>" >&2
         exit 2
     fi
+
+    local domain_name=${1:-}
+    local app_port=${2:-}
 
     if [[ -f "/etc/nginx/sites-available/${domain_name}.conf" ]]; then
         echo "Error: Domain configuration for ${domain_name} already exists." >&2
