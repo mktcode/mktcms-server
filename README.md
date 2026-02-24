@@ -4,19 +4,9 @@
 
 ## Installation
 
-### Cloud-init/Automated Setup (Recommended)
-
 If you use the provided `init.yml` (cloud-init), the repository will be cloned to `/root/mktcms-server` and the CLI will be added to root's `PATH` automatically.
 
-### Manual Installation (Non-cloud-init)
-
-Clone on the server and add the CLI folder to your `PATH`:
-
-```bash
-git clone https://github.com/mktcode/mktcms-server.git
-echo 'export PATH=$PATH:~/mktcms-server/cli' >> ~/.bashrc
-source ~/.bashrc
-```
+For manual installation, refer to the steps in `init.yml`.
 
 ## Quick Start
 
