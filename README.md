@@ -1,6 +1,6 @@
 # MktCMS Server
 
-`mktcms-server` provides server bootstrap config (`init.yml`) and a CLI utility (`mktcms`) to manage multiple websites (using the Nuxt 4 template https://github.com/mktcode/mktcms-website-template)  and quick ops tasks on a cloud VM.
+`mktcms-server` provides server bootstrap config (`init.yml`) and a CLI utility (`mktcms`) to manage multiple websites (using the Nuxt 4 template https://github.com/mktcode/mktcms-website-template) and quick ops tasks on a cloud VM.
 
 ## Installation
 
