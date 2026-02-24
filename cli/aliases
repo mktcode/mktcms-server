@@ -1,7 +1,0 @@
-# CLI Aliases for mktcms-server
-# Source this file in your ~/.bashrc with: source /home/mkt/Projekte/mktcms-server/cli/aliases
-
-# Backward compatible wrapper (prefer the standalone `websitesall` command)
-allwebsites() {
-  websitesall "$@"
-}
