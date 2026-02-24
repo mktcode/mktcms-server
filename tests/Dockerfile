@@ -1,6 +1,7 @@
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV MKTCMS_TESTS_IN_DOCKER=1
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \

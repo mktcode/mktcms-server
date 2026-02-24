@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ "${MKTCMS_TESTS_IN_DOCKER:-}" != "1" ]]; then
+    echo "Error: Refusing to run tests outside the Docker test container." >&2
+    echo "Run: bash tests/run-tests-docker.sh" >&2
+    exit 1
+fi
+
 REPO_ROOT="$(cd -P -- "$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")/.." && pwd)"
 cd "$REPO_ROOT"
 
