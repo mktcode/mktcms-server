@@ -27,6 +27,10 @@ cmd_new() {
         clone_url="git@github.com:${repo_param}.git"
     fi
 
+    local escaped_repo_param
+    escaped_repo_param=${repo_param//&/\\&}
+    escaped_repo_param=${escaped_repo_param//\//\\/}
+
     local random_auth_key
     random_auth_key=$(openssl rand -base64 32 | tr -d '/=+' | cut -c1-32)
 
@@ -54,7 +58,7 @@ cmd_new() {
     sed "s/{{DOMAIN_NAME}}/${domain_name}/g; s/{{APP_PORT}}/${app_port}/g" "$TEMPLATE_DIR/nginx.conf" > "/etc/nginx/sites-available/${domain_name}.conf"
     ln -s "/etc/nginx/sites-available/${domain_name}.conf" "/etc/nginx/sites-enabled/${domain_name}.conf"
 
-    sed "s/{{DOMAIN_NAME}}/${domain_name}/g; s/{{REPO}}/${repo_param}/g; s/{{APP_PORT}}/${app_port}/g; s/{{RANDOM_AUTH_KEY}}/${random_auth_key}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${domain_name}.conf"
+    sed "s/{{DOMAIN_NAME}}/${domain_name}/g; s/{{REPO}}/${escaped_repo_param}/g; s/{{APP_PORT}}/${app_port}/g; s/{{RANDOM_AUTH_KEY}}/${random_auth_key}/g" "$TEMPLATE_DIR/supervisor.conf" > "/etc/supervisor/conf.d/${domain_name}.conf"
 
     mkdir -p "/var/www/websites/${domain_name}"
     cd "/var/www/websites/${domain_name}"

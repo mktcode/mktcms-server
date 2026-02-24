@@ -116,3 +116,13 @@ mktcms help
 - Run commands with privileges required to manage `/etc/nginx`, `/etc/supervisor`, certificates, and `/var/www/websites`.
 - `mktcms` expects template files in `website/nginx.conf` and `website/supervisor.conf`.
 - `mktcms new` and `mktcms update` assume the project uses `npm ci` and `npm run build`.
+
+## Testing (Isolated Docker)
+
+Run CLI tests in an ephemeral Docker container so host paths and services stay untouched:
+
+```bash
+bash tests/run-tests-docker.sh
+```
+
+This builds `tests/Dockerfile`, runs `tests/test-cli.sh` inside the container, and removes the container afterwards.
