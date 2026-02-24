@@ -114,6 +114,7 @@ mktcms help
 ## Notes
 
 - Run commands with privileges required to manage `/etc/nginx`, `/etc/supervisor`, certificates, and `/var/www/websites`.
+- Website template source: https://github.com/mktcode/mktcms-website-template (Nuxt 4 app used for websites on this server).
 - `mktcms` expects template files in `website/nginx.conf` and `website/supervisor.conf`.
 - `mktcms new` and `mktcms update` assume the project uses `npm ci` and `npm run build`.
 

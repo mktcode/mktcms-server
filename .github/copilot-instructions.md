@@ -1,6 +1,7 @@
 # Copilot Instructions
 
 - Keep changes minimal and production-safe; this repo manages real server infrastructure.
+- Website template source: https://github.com/mktcode/mktcms-website-template (Nuxt 4 app used for websites on this server).
 - Main CLI entrypoint is `cli/mktcms` (dispatcher only). Subcommands live in `cli/commands/*.sh`.
 - For new CLI actions, add a dedicated `cli/commands/<name>.sh` file with a `cmd_<name>()` function.
 - Wire every new command in **both** places: `cli/mktcms` (`source` + `case`) and `cli/lib/common.sh` (`usage()` text + examples).
