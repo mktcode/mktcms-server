@@ -71,6 +71,14 @@ websiterestart yourdomain.com
 
 ## Other helpful commands
 
+Run a command in every website directory:
+
+```bash
+websitesall <command> [args...]
+# e.g.
+websitesall git pull
+```
+
 See how many IP addresses are currently banned by Fail2Ban for SSH:
 
 ```bash
