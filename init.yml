@@ -57,3 +57,8 @@ runcmd:
   - systemctl enable --now nginx
   - systemctl enable --now supervisor
   - systemctl enable --now fail2ban
+
+  # Clone mktcms-server and add CLI to PATH for root
+  - git clone https://github.com/mktcode/mktcms-server.git /root/mktcms-server
+  - echo 'export PATH=$PATH:/root/mktcms-server/cli' >> /root/.bashrc
+  - source /root/.bashrc
