@@ -84,3 +84,9 @@ See how many IP addresses are currently banned by Fail2Ban for SSH:
 ```bash
 fail2ban-client status sshd
 ```
+
+Show Fail2Ban SSH status and Supervisor process status together:
+
+```bash
+mktcms status
+```
