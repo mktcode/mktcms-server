@@ -15,10 +15,6 @@ Usage:
   mktcms adddomain <domain_name> <app_port>
   mktcms all <command> [args...]
 
-Also supported as sub-sub-commands:
-  mktcms website <command> [...]
-  mktcms websites <command> [...]
-
 Examples:
   mktcms new yourdomain.com 3001 mktcode/your-repo
   mktcms update yourdomain.com
@@ -243,18 +239,6 @@ main() {
     fi
 
     shift || true
-
-    case "$command" in
-        website|websites)
-            local nested=${1:-}
-            if [[ -z "$nested" ]]; then
-                usage
-                exit 2
-            fi
-            shift || true
-            command="$nested"
-            ;;
-    esac
 
     case "$command" in
         new)
