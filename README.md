@@ -90,3 +90,9 @@ Show Supervisor status for one service:
 ```bash
 mktcms status yourdomain.com
 ```
+
+Tail Supervisor stderr logs for one service:
+
+```bash
+mktcms errors yourdomain.com
+```

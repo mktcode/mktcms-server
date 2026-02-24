@@ -13,6 +13,7 @@ source "$SCRIPT_DIR/commands/adddomain.sh"
 source "$SCRIPT_DIR/commands/all.sh"
 source "$SCRIPT_DIR/commands/banned.sh"
 source "$SCRIPT_DIR/commands/status.sh"
+source "$SCRIPT_DIR/commands/errors.sh"
 
 main() {
     local command=${1:-}
@@ -55,6 +56,9 @@ main() {
             ;;
         status)
             cmd_status "$@"
+            ;;
+        errors)
+            cmd_errors "$@"
             ;;
         *)
             echo "Unknown command: $command" >&2

@@ -15,6 +15,7 @@ Usage:
   mktcms all <command> [args...]
   mktcms banned
   mktcms status <service>
+  mktcms errors <service>
 
 Examples:
   mktcms new yourdomain.com 3001 mktcode/your-repo
@@ -22,5 +23,6 @@ Examples:
   mktcms all git status
   mktcms banned
   mktcms status yourdomain.com
+  mktcms errors yourdomain.com
 EOF
 }
