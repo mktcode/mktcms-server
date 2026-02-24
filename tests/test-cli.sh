@@ -101,7 +101,7 @@ assert_exit() {
     local expected=$1
     local actual=$2
     if [[ "$actual" -ne "$expected" ]]; then
-        echo "Expected exit code $expected, got $actual" >&2
+        echo "FAIL ${CURRENT_TEST:-unknown}: Expected exit code $expected, got $actual" >&2
         exit 1
     fi
 }
@@ -110,7 +110,7 @@ assert_contains() {
     local needle=$1
     local haystack=$2
     if ! grep -Fq "$needle" "$haystack"; then
-        echo "Expected '$needle' in $haystack" >&2
+        echo "FAIL ${CURRENT_TEST:-unknown}: Expected '$needle' in $haystack" >&2
         exit 1
     fi
 }
@@ -258,6 +258,7 @@ main() {
 
     local test_name
     for test_name in "${tests[@]}"; do
+        CURRENT_TEST="$test_name"
         "$test_name"
         echo "PASS ${test_name}"
     done
