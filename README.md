@@ -28,7 +28,22 @@ mktcms new yourdomain.com 3001 mktcode/your-repo
 mktcms cert yourdomain.com admin@yourdomain.com
 ```
 
+4. Enable site indexing:
+
+```bash
+# Set `NUXT_SITE_ENV` to `production` (or remove it)
+mktcms env yourdomain.com
+mktcms restart yourdomain.com
+```
+
 ## Command Reference
+
+### `mktcms help`
+Prints usage and examples.
+
+```bash
+mktcms help
+```
 
 ### `mktcms new <domain_name> <app_port> <owner/repo-name>`
 Creates a complete new site setup (Nginx + Supervisor config), clones the app repo, installs dependencies, builds it, and activates services.
@@ -100,11 +115,11 @@ Tails Supervisor `stderr` logs for one service (`supervisorctl tail -f <service>
 mktcms errors yourdomain.com
 ```
 
-### `mktcms help`
-Prints usage and examples.
+### `mktcms env <service>`
+Opens the Supervisor config for the given service in your default editor.
 
 ```bash
-mktcms help
+mktcms env yourdomain.com
 ```
 
 ## Notes
