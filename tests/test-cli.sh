@@ -30,6 +30,12 @@ create_stub() {
     chmod +x "$TEST_BIN_DIR/$name"
 }
 
+create_stub vim <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+echo "vim $*" >> "$TEST_LOG_FILE"
+EOF
+
 create_stub openssl <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
@@ -247,6 +253,32 @@ test_all_command() {
     rm -f "$output"
 }
 
+test_env_command() {
+    reset_fixtures
+    mkdir -p /var/www/websites/example.com
+    echo "dummy config" > /etc/supervisor/conf.d/example.com.conf
+
+    local output
+    output="$(mktemp)"
+
+    # success case
+    run_cli_capture "$output" env example.com
+    assert_exit 0 "$RUN_CLI_RC"
+    assert_contains "vim /etc/supervisor/conf.d/example.com.conf" "$TEST_LOG_FILE"
+
+    # non-existing
+    run_cli_capture "$output" env nonexisting
+    assert_exit 1 "$RUN_CLI_RC"
+    assert_contains "Error: /etc/supervisor/conf.d/nonexisting.conf does not exist." "$output"
+
+    # wrong usage
+    run_cli_capture "$output" env
+    assert_exit 2 "$RUN_CLI_RC"
+    assert_contains "Usage: mktcms env <service>" "$output"
+
+    rm -f "$output"
+}
+
 main() {
     local -a tests=(
         "test_help_and_usage"
@@ -254,6 +286,7 @@ main() {
         "test_new_command_validation"
         "test_adddomain_update_delete_and_ops"
         "test_all_command"
+        "test_env_command"
     )
 
     local test_name
