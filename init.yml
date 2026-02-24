@@ -44,9 +44,19 @@ runcmd:
   - install -d -o websites -g websites /var/log/websites
 
   # Node.js global – Version: 24.12.0 (LTS)
-  - curl -fsSL https://nodejs.org/dist/v24.12.0/node-v24.12.0-linux-x64.tar.xz -o /tmp/node-v24.12.0-linux-x64.tar.xz
-  - tar -xJf /tmp/node-v24.12.0-linux-x64.tar.xz -C /usr/local --strip-components=1
-  - rm -f /tmp/node-v24.12.0-linux-x64.tar.xz
+  - ARCH=$(uname -m)
+  - |
+    if [ "$ARCH" = "x86_64" ]; then
+      NODE_ARCH="x64"
+    elif [ "$ARCH" = "aarch64" ]; then
+      NODE_ARCH="arm64"
+    else
+      echo "Unsupported architecture: $ARCH"
+      exit 1
+    fi
+  - curl -fsSL https://nodejs.org/dist/v24.12.0/node-v24.12.0-linux-${NODE_ARCH}.tar.xz -o /tmp/node.tar.xz
+  - tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1
+  - rm -f /tmp/node.tar.xz
 
   # Remove default nginx config and html
   - rm -f /etc/nginx/sites-enabled/default
