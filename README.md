@@ -125,6 +125,7 @@ mktcms env yourdomain.com
 ## Notes
 
 - Run commands with privileges required to manage `/etc/nginx`, `/etc/supervisor`, certificates, and `/var/www/websites`.
+- Update `mktcms` itself by running `git pull` in `/root/mktcms-server` and reloading your shell.
 - `mktcms` expects template files in `website/nginx.conf` and `website/supervisor.conf`.
 - `mktcms new` and `mktcms update` assume the project uses `npm ci` and `npm run build`.
 
