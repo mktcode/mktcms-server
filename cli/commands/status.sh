@@ -1,28 +1,17 @@
 #!/usr/bin/env bash
 
 cmd_status() {
-    local overall_rc=0
+    local service=${1:-}
 
-    echo "== fail2ban-client status sshd =="
-    if command -v fail2ban-client >/dev/null 2>&1; then
-        if ! fail2ban-client status sshd; then
-            overall_rc=1
-        fi
-    else
-        echo "Error: fail2ban-client command not found." >&2
-        overall_rc=1
+    if [[ -z "$service" ]]; then
+        echo "Usage: mktcms status <service>" >&2
+        exit 2
     fi
 
-    echo
-    echo "== supervisorctl status =="
-    if command -v supervisorctl >/dev/null 2>&1; then
-        if ! supervisorctl status; then
-            overall_rc=1
-        fi
-    else
+    if ! command -v supervisorctl >/dev/null 2>&1; then
         echo "Error: supervisorctl command not found." >&2
-        overall_rc=1
+        exit 1
     fi
 
-    return "$overall_rc"
+    supervisorctl status "$service"
 }

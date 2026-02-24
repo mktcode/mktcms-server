@@ -11,6 +11,7 @@ source "$SCRIPT_DIR/commands/restart.sh"
 source "$SCRIPT_DIR/commands/cert.sh"
 source "$SCRIPT_DIR/commands/adddomain.sh"
 source "$SCRIPT_DIR/commands/all.sh"
+source "$SCRIPT_DIR/commands/banned.sh"
 source "$SCRIPT_DIR/commands/status.sh"
 
 main() {
@@ -48,6 +49,9 @@ main() {
             ;;
         all)
             cmd_all "$@"
+            ;;
+        banned)
+            cmd_banned "$@"
             ;;
         status)
             cmd_status "$@"

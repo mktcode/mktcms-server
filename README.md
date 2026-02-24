@@ -82,11 +82,11 @@ mktcms all git pull
 See how many IP addresses are currently banned by Fail2Ban for SSH:
 
 ```bash
-fail2ban-client status sshd
+mktcms banned
 ```
 
-Show Fail2Ban SSH status and Supervisor process status together:
+Show Supervisor status for one service:
 
 ```bash
-mktcms status
+mktcms status yourdomain.com
 ```
