@@ -59,11 +59,6 @@ runcmd:
   - tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1
   - rm -f /tmp/node.tar.xz
 
-  # Remove default nginx config and html
-  - rm -f /etc/nginx/sites-enabled/default
-  - rm -rf /var/www/html
-  - nginx -t
-
   # Start and enable services
   - systemctl enable --now nginx
   - systemctl enable --now supervisor
