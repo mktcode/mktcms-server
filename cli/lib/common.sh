@@ -12,6 +12,7 @@ Usage:
   mktcms restart <domain_name>
   mktcms cert <domain_name> <email>
   mktcms adddomain <domain_name> <app_port>
+  mktcms deletedomain <domain_name>
   mktcms all <command> [args...]
   mktcms banned
   mktcms status <service>
@@ -21,6 +22,7 @@ Usage:
 Examples:
   mktcms new yourdomain.com 3001 mktcode/your-repo
   mktcms update yourdomain.com
+  mktcms deletedomain yourdomain.com
   mktcms all git status
   mktcms banned
   mktcms status yourdomain.com

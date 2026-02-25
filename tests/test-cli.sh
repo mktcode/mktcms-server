@@ -239,6 +239,31 @@ test_adddomain_update_delete_and_ops() {
     rm -f "$output"
 }
 
+test_deletedomain() {
+    reset_fixtures
+    local output
+    output="$(mktemp)"
+
+
+    # Create dummy config and symlink for example.com
+    echo "dummy config" > /etc/nginx/sites-available/example.com.conf
+    ln -s /etc/nginx/sites-available/example.com.conf /etc/nginx/sites-enabled/example.com.conf
+
+    run_cli_capture "$output" deletedomain example.com
+    assert_exit 0 "$RUN_CLI_RC"
+    assert_contains "Domain example.com has been deleted." "$output"
+
+    run_cli_capture "$output" deletedomain nonexisting
+    assert_exit 1 "$RUN_CLI_RC"
+    assert_contains "Error: Domain configuration for nonexisting does not exist." "$output"
+
+    run_cli_capture "$output" deletedomain
+    assert_exit 2 "$RUN_CLI_RC"
+    assert_contains "Usage: mktcms deletedomain <domain_name>" "$output"
+
+    rm -f "$output"
+}
+
 test_all_command() {
     reset_fixtures
     mkdir -p /var/www/websites/site-a /var/www/websites/site-b
@@ -285,6 +310,7 @@ main() {
         "test_new_command_success"
         "test_new_command_validation"
         "test_adddomain_update_delete_and_ops"
+        "test_deletedomain"
         "test_all_command"
         "test_env_command"
     )

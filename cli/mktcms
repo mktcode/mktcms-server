@@ -10,6 +10,7 @@ source "$SCRIPT_DIR/commands/delete.sh"
 source "$SCRIPT_DIR/commands/restart.sh"
 source "$SCRIPT_DIR/commands/cert.sh"
 source "$SCRIPT_DIR/commands/adddomain.sh"
+source "$SCRIPT_DIR/commands/deletedomain.sh"
 source "$SCRIPT_DIR/commands/all.sh"
 source "$SCRIPT_DIR/commands/banned.sh"
 source "$SCRIPT_DIR/commands/status.sh"
@@ -48,6 +49,9 @@ main() {
             ;;
         adddomain)
             cmd_adddomain "$@"
+            ;;
+        deletedomain)
+            cmd_deletedomain "$@"
             ;;
         all)
             cmd_all "$@"

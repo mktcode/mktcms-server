@@ -87,6 +87,13 @@ Adds an additional Nginx domain configuration that points to an existing app por
 mktcms adddomain shop.yourdomain.com 3001
 ```
 
+### `mktcms deletedomain <domain_name>`
+Removes an additional Nginx domain configuration (but does not touch files or Supervisor config). Disables the site, removes the config, and reloads Nginx.
+
+```bash
+mktcms deletedomain yourdomain.com
+```
+
 ### `mktcms all <command> [args...]`
 Runs any shell command inside every website directory under `/var/www/websites`.
 
