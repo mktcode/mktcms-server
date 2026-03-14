@@ -16,5 +16,7 @@ cmd_update() {
         npm run build
     fi
     chown -R websites:websites "/var/www/websites/${domain_name}"
+    supervisorctl reread
+    supervisorctl update
     supervisorctl restart "${domain_name}"
 }
