@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# TODO: Perform git status check and warn if there are uncommitted changes before deleting a website.
+
 cmd_delete() {
     if (( $# != 1 )); then
         echo "Usage: mktcms delete <domain_name>" >&2
