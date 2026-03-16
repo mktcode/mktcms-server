@@ -12,4 +12,5 @@ cmd_banned() {
     fi
 
     fail2ban-client status sshd
+    fail2ban-client status nginx-php-probe
 }

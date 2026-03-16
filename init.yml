@@ -32,6 +32,23 @@ write_files:
       maxretry = 5
       bantime  = 24h
       findtime = 10m
+  - path: /etc/fail2ban/filter.d/nginx-php-probe.conf
+    permissions: "0644"
+    content: |
+      [Definition]
+      failregex = ^<HOST> - .* "(GET|POST).*\.php.*HTTP.*" (404|301|403)
+      ignoreregex =
+  - path: /etc/fail2ban/jail.d/nginx-php-probe.local
+    permissions: "0644"
+    content: |
+      [nginx-php-probe]
+      enabled  = true
+      filter   = nginx-php-probe
+      logpath  = /var/log/nginx/access.log
+      port     = http,https
+      findtime = 600
+      maxretry = 5
+      bantime  = 86400
 
 runcmd:
   # Set timezone
