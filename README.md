@@ -67,7 +67,7 @@ mktcms delete yourdomain.com
 ```
 
 ### `mktcms restart <domain_name>`
-Validates and reloads Nginx/Supervisor state, then restarts one Supervisor service.
+Rereads Supervisor config, updates only that domain service, then restarts it.
 
 ```bash
 mktcms restart yourdomain.com

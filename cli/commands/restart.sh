@@ -8,9 +8,12 @@ cmd_restart() {
 
     local domain_name=${1:-}
 
-    nginx -t
-    systemctl reload nginx
+    if ! command -v supervisorctl >/dev/null 2>&1; then
+        echo "Error: supervisorctl command not found." >&2
+        exit 1
+    fi
+
     supervisorctl reread
-    supervisorctl update
+    supervisorctl update "${domain_name}"
     supervisorctl restart "${domain_name}"
 }
